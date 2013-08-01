@@ -1,0 +1,8 @@
+Get in touch with marketing to see what we can do with Olemiss/FNC marketing...
+Database structure
+User validation on the backend
+App design
+Inacticve functionality to database design
+Scaleable design
+Email courtney
+Poll answer buttons autosubmit

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>OleMissGameday Backend</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+		<link href="bootstrap.css" rel="stylesheet" />
+		
+		<style type="text/css">
+			.questionId{
+				margin-left:10px;
+			}
+		</style>
+		
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		
+			var questionData;
+		
+			$(document).ready(function(){
+				$.ajax({
+				url: "app.php",
+				data: {"command":"getQuestionData"}, //NEED TO PERSIST THIS DATA
+				dataType: "json",
+				type: "GET" //TODO: CHANGE THIS TO POST WHEN WE SWITCH FROM DEBUG
+				}).success(function(data) {
+					questionData = data;
+					updateQuestions();
+				});
+			});
+			
+			function updateQuestions(){
+				console.debug("updating");
+				
+				divQuestions = $("#divQuestions");
+			
+				for(question in questionData){
+					divCurrent = $("#"+question);
+					
+					var totalNumAnswers = 0;
+		
+					for(i in questionData[question].answers){
+						totalNumAnswers += parseInt(questionData[question].answers[i].numResponses);
+					}
+					
+					if(divCurrent.length == 0){ //CREATE
+				
+						htmlString = "<div class='well' id='"+question+"'>";
+						htmlString += "<strong>"+questionData[question].question+"</strong><span class='questionId'>Question "+questionData[question].questionID+"</span><br/>";
+						
+						//(answerCount.get(i)*100)/answerCountSum)
+						
+						console.debug(questionData[question]);
+						
+						htmlString += "<ol>";
+						for(i in questionData[question].answers){
+							
+							var width = ((parseInt(questionData[question].answers[i].numResponses)*100)/totalNumAnswers);
+						
+							htmlString+="<li>"+questionData[question].answers[i].answer+"</li>\n";
+							htmlString+="<div id='"+question+"answer"+questionData[question].answers[i].answerID+"' style='background-color:red;display:block;width:"+width+"%;'>"+questionData[question].answers[i].numResponses+"</div>\n";
+						}
+						htmlString+="</ol>\n";
+						
+						htmlString += "</div>";
+						
+						divQuestions.append(htmlString);
+					}else{ //UPDATE
+					
+						for(i in questionData[question].answers){
+							var width = ((parseInt(questionData[question].answers[i].numResponses)*100)/totalNumAnswers);
+							
+							var answerArea = $("#"+question+"answer"+questionData[question].answers[i].answerID);
+							
+							if(answerArea.length == 0){ //we have answers but the answer div's haven't been created yet
+								var htmlString = "";
+								htmlString+="<li>"+questionData[question].answers[i].answer+"</li>\n";
+								htmlString+="<div id='"+question+"answer"+questionData[question].answers[i].answerID+"' style='background-color:red;display:block;width:"+width+"%;'>"+questionData[question].answers[i].numResponses+"</div>\n";
+								$("#"+question).children("ol").append(htmlString);
+							}
+							
+							answerArea.css("width",width+"%");
+							answerArea.html(questionData[question].answers[i].numResponses);
+						}
+					}
+				}
+				
+				$.ajax({
+				url: "app.php",
+				data: {"command":"getQuestionData"}, //NEED TO PERSIST THIS DATA
+				dataType: "json",
+				type: "GET" //TODO: CHANGE THIS TO POST WHEN WE SWITCH FROM DEBUG
+				}).success(function(data) {
+					questionData = data;
+					updateQuestions();
+				});
+			}
+			
+		
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<h1>
+			<img src='olemiss.jpg' class='topLogo' style="height:120px;width:320px;" />
+			</h1>
+			<h1>Poll Results</h1>
+			<div class="container-fluid">
+				<div class="row-fluid" id="divQuestions">
+
+				</div>
+				<!-- /container -->
+				<div class="footer">
+					<p>© FNC 2013</p>
+				</div>
+				
+			</div>
+		</div>
+	</body>
+</html>

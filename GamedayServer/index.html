@@ -1,0 +1,296 @@
+<html>
+	<head>
+		<title>OleMissGameday Backend</title>
+	
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+	
+		<script type="text/javascript">
+			
+			var questionCount = 5;
+			
+			var questionData;
+			
+			$(document).ready(function(){
+			
+				console.debug("Ready");
+				
+				//DO GET DATA
+				$.ajax({
+				  url: "app.php",
+				  data: {"command":"getQuestionData"},
+				  dataType: "json",
+				  type: "GET" //TODO: CHANGE THIS TO POST WHEN WE SWITCH FROM DEBUG
+				}).done(function(data) {
+					questionData = data;
+					
+					for(i in questionData){
+						var htmlText = "<li id='"+i+"' class='clickableItem clickableQuestion'>"+i+"</li>";
+						$("#questionList").prepend(htmlText);
+					}
+					$(".clickableQuestion").click(setClickHandler);
+					$("#addQuestion").click(setBtnAddQuestionHandler);
+				});
+				
+				
+			});
+			
+			var setBtnAddQuestionHandler = function(){ //ADD QUESTION MENU ITEM CLICK
+					questionCount++;
+					var newQuestion = "<li id='question"+questionCount+"' class='clickableItem clickableQuestion'> Question Item "+questionCount+"</li>\n";
+					$(this).before(newQuestion);
+					
+					
+					var newContentHtml = "<input type='text' id='txtQuestion' class='enterQuestion' value='Enter your question here' />\n";
+					newContentHtml += "<br />";
+					newContentHtml += "<ol id='answerChoices'>\n";
+					newContentHtml += "<li><input type='text' value='Enter answer choice' class='enterAnswer lastAnswerChoice' /></li>\n";
+					newContentHtml += "</ol>\n";
+					newContentHtml += "<input type='button' id='btnAddChoice' value='Add another answer choice' />\n";
+					newContentHtml += "<input type='button' id='btnSaveNewQuestion' value='Save' />\n";
+					
+					$("#content").html(newContentHtml);
+					$("#txtQuestion").focus();
+					
+					$(".lastAnswerChoice").keypress(function(event) {
+						var keycode = (event.keyCode ? event.keyCode : event.which);
+						if (keycode == '13') {
+							$('#btnAddChoice').click();
+						}
+					});
+					
+					
+					$("#btnAddChoice").click(function(){ //ADD BUTTON
+						$(".lastAnswerChoice").unbind("keypress");
+						$(".lastAnswerChoice").removeClass("lastAnswerChoice");
+						$("#answerChoices").append("<li><input type='text' value='Enter answer choice' class='enterAnswer lastAnswerChoice' /></li>\n");
+						$(".lastAnswerChoice").keypress(function(event) {
+							var keycode = (event.keyCode ? event.keyCode : event.which);
+							if (keycode == '13') {
+								$('#btnAddChoice').click();
+							}
+						}).focus();
+					});
+					$("#btnSaveNewQuestion").click(function(){ //SAVE BUTTON
+						questionData["question"+questionCount] = {};
+						questionData["question"+questionCount]["question"] = $("#txtQuestion").val();
+						questionData["question"+questionCount]["answers"] = [];
+						$(".enterAnswer").each(function(index,element){
+							questionData["question"+questionCount]["answers"].push({"answer":this.value,"numResponses":0});
+						});
+						
+						$(".clickableItem").removeClass("disabled");
+						
+						$(".clickableItem").unbind('click');
+						$(".clickableQuestion").click(setClickHandler);
+						$("#addQuestion").click(setBtnAddQuestionHandler);
+						
+						$("#content").html(""); //SAVED
+					});
+					
+					$(".clickableItem").unbind('click');
+					$(".clickableItem").click(function(){
+						alert("You must finish editing the current question before you can change questions");
+					});
+					
+					$(".clickableItem").addClass("disabled");
+				}
+			
+			var setClickHandler = function(){ //REGISTERS THE QUESTION MENU ITEMS WITH THEIR ACTUAL QUESTION AND RENDERS
+				
+					var text = "<h3>"+questionData[this.id].question+"</h3>\n";
+					text+="<ol>\n";
+					
+					var totalNumAnswers = 0;
+					
+					for(i in questionData[this.id].answers){
+						totalNumAnswers += parseInt(questionData[this.id].answers[i].numResponses);
+					}
+					
+					for(i in questionData[this.id].answers){
+						
+						var width = (1/(totalNumAnswers/parseInt(questionData[this.id].answers[i].numResponses)))*100;
+					
+						text+="<li>"+questionData[this.id].answers[i].answer+"</li>\n";
+						text+="<div style='background-color:red;display:block;width:"+width+"%;'>"+questionData[this.id].answers[i].numResponses+"</div>\n";
+					}
+					text+="</ol>\n";
+					$("#content").html(text);
+				};
+			
+		
+		</script>
+	
+		<style type="text/css">
+	
+			body{
+				background-color:lightgrey;
+				padding:0px;
+				margin: 0 0 auto 0;
+				border:0px;
+			}
+			
+			.disabled{
+				background-color:darkgrey;
+				border-color:black;
+			}
+			
+			.clearDiv{
+				border-top:1px solid black;
+				clear:both;
+				width:100%;
+			}
+			
+			.lastAnswerChoice{
+				border:2px solid blue;
+			}
+			
+			.topLogo{
+				height:120px;
+				width:320px;
+			}
+			
+			#headerContent{
+				background-color:white;
+			}
+			
+			#menucontent{
+				background-color:red;
+			}
+			
+			#menuContent ul{
+				list-style-type:none;
+				margin:0;
+				padding:0;
+				width:100%;
+			}
+			
+			#menuContent ul li{
+				float:left;
+				border: 3px solid blue;
+			}
+			
+			#mainContent{
+				border:1px solid black;
+				
+				margin-left: auto ;
+				margin-right: auto ;
+				width: 750px;
+				margin-top: 25px;
+			}
+			
+			#bodyContent{
+				display:table-row;
+			}
+			
+			#bodyContent #leftbar{
+				display:table-cell;
+				height:100%;
+			}
+			
+			#bodyContent #rightbar{
+				display:table-cell;
+				height:100%;
+			}
+			
+			#leftBar{
+				padding-top:5px;
+				padding-bottom:5px;
+				padding-left:8px;
+				padding-right:8px;
+				border-right: 1px solid black;
+			}
+			
+			#leftBar ul{
+				list-style-type:none;
+				margin:0;
+				padding:0;
+				width:100%;
+			}
+			
+			#leftBar ul li{
+				padding:4px;
+				border: 3px solid blue;
+				margin-top:3px;
+				margin-bottom:3px;
+			}
+			
+			#leftBar ul li:hover{
+				background-color:darkgrey;
+			}
+			
+			#rightBar{
+				padding-top:5px;
+				padding-bottom:5px;
+				padding-left:8px;
+				padding-right:8px;
+			}
+			
+			#footerContent{
+				background-color:white;
+				font-size:10px;
+				color:#CF2031;
+				padding:5px;
+			}
+			
+			
+		</style>
+		
+		
+	</head>
+	<body>
+		<div id='mainContent'>
+		
+			<div id='headerContent'>
+			
+				<div style="float:left;">
+					<img src='olemiss.jpg' class='topLogo' />
+				</div>
+				<div style="float:left;">
+					<!-- Top Text -->
+				</div>
+				<div class="clearDiv"></div>
+				
+				
+				<div id='menuContent'>
+					<!--
+					<ul>
+						<li>Menu Item</li>
+						<li>Menu Item</li>
+						<li>Menu Item</li>
+						<li>Menu Item</li>
+						<li>Menu Item</li>
+						<li>Menu Item</li>
+						<li>Menu Item</li>
+						<li>Menu Item</li>
+					</ul>
+					-->
+					<div class="clearDiv"></div>
+				</div>
+				
+			</div>
+			
+			<div id='bodyContent'>
+				
+				<div id='leftBar'>
+					<ul id="questionList">
+
+						<li id="addQuestion" class="clickableItem">Add Question [+]</li>
+					</ul>
+				</div>
+				<div id='rightBar'>
+					<div id='content'>
+						
+					</div>
+				</div>
+			</div>
+			<div class="clearDiv"></div>
+			
+			<div id='footerContent'>
+					<!-- Footer Text -->
+					Olemiss Gameday Application; 2013
+			</div>
+			
+		</div>
+		
+	</body>
+</html>
