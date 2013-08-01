@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.view.Menu;
 
 public class MainMenu extends Activity {
-	//Added a comment. -Dan Robinson
+	//Added a comment. -Sarah Shows
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
