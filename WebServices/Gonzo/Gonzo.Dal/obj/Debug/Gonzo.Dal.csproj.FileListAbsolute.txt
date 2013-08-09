@@ -1,0 +1,7 @@
+C:\Users\dnemesek\Documents\GitHub\aspnet\Gonzo\WebServices\Gonzo\Gonzo.Dal\bin\Debug\Gonzo.Dal.dll
+C:\Users\dnemesek\Documents\GitHub\aspnet\Gonzo\WebServices\Gonzo\Gonzo.Dal\bin\Debug\Gonzo.Dal.pdb
+C:\Users\dnemesek\Documents\GitHub\aspnet\Gonzo\WebServices\Gonzo\Gonzo.Dal\bin\Debug\Gonzo.Domain.dll
+C:\Users\dnemesek\Documents\GitHub\aspnet\Gonzo\WebServices\Gonzo\Gonzo.Dal\bin\Debug\Gonzo.Domain.pdb
+C:\Users\dnemesek\Documents\GitHub\aspnet\Gonzo\WebServices\Gonzo\Gonzo.Dal\obj\Debug\Gonzo.Dal.csprojResolveAssemblyReference.cache
+C:\Users\dnemesek\Documents\GitHub\aspnet\Gonzo\WebServices\Gonzo\Gonzo.Dal\obj\Debug\Gonzo.Dal.dll
+C:\Users\dnemesek\Documents\GitHub\aspnet\Gonzo\WebServices\Gonzo\Gonzo.Dal\obj\Debug\Gonzo.Dal.pdb
